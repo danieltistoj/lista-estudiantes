@@ -71,7 +71,16 @@ def buscar_por_carnet(pila)
     {value: nodo[:carnet], alignment: :center},
     ])
   end
+  tabla1 = Terminal::Table.new do |a|
+  a.headings = [{value:'Asistencia ', alignment: :center}]
+  nodo[:asistencia].each do |i|
+  a.add_row([
+    {value: i, alignment: :center},
+    ])
+  end
+  end
   puts tabla
+  puts tabla1
   end
   gets
 end
@@ -86,7 +95,6 @@ def buscar_por_posicion(pila)
   tabla = Terminal::Table.new do |a|
   a.title= 'Lista de Estudiantes'
   a.headings = [{value:'Posicion', alignment: :center},{value:'Estudinate', alignment: :center},{value:'Carnet', alignment: :center}]
-
   a.add_row([
     {value: nodo[:posicion], alignment: :center},
     {value: nodo[:nombre], alignment: :center},
@@ -103,8 +111,28 @@ def definir_max(pila)
   num= gets.to_i
   pila.definir_max_elemento(num)
 end
-def tomar_asistencia(pila) #tomar asistenacia
+#tomar asistencia
+def tomar_asistencia(pila) #tomar asistencia
+  pila_1=pila.mandar_pila
+if pila_1[:tope] == nil
+  puts 'El sistema no tiene estudiantes'
+else
+  print 'Ingrese el carnet: '
+  carnet = gets.chomp
+  nodo = pila.obtener_por_carnet(carnet)
+  if nodo == false
+    puts 'El estudiante no existe en el sistema'
+  else
+    t = Time.now
+    fecha_hora=t.strftime("%d/%m/%Y - %H:%M:%S")
+    nodo[:asistencia].push(fecha_hora)
+    limpiar_pantalla
+    puts "Se le ha sumado una asistencia al estudiante #{nodo[:nombre]}: #{fecha_hora}"
+  end
 end
+  gets
+end
+
 #menu principla
 pila = Pila.new
 tabla = Terminal::Table.new do |a|
@@ -138,12 +166,12 @@ when '4'
 when '5'
   definir_max(pila)
 when '6'
-
+    tomar_asistencia(pila)
 when '7'
   puts pila.eliminar_nodo
   gets
 when '8'
-  puts 'Sistema finalizado'
+  puts 'Programa finalizado'
 else
   print 'Ingreso un valor erroneo'
   gets
